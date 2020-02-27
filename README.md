@@ -1,8 +1,12 @@
 ### Remote Desktop
 
-`docker run -p 6080:6080 zinnionlcc/zinnion-desktop`
+`docker run docker run --shm-size=1024m --privileged -p 6080:6080 zinnionlcc/zinnion-desktop`
 
 * VNC is protected by a unique random password for each session
 * Desktop runs in a standard user account instead of the root account
 * Supports dynamic resizing of the desktop and 24-bit true color
 * Supports Ubuntu LTS releases 18.04
+
+### Cavents
+
+If you open some graphic/work intensive websites in the Docker container (especially with high resolutions e.g. 1920x1080) it can happen that Chrome crashes without any specific reason. The problem there is the too small /dev/shm size in the container, the work around is using `--shm-size`
