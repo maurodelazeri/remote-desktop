@@ -1,6 +1,6 @@
 ### Remote Desktop
 
-`docker run -p 6080:6080 zinnion-desktop`
+`docker run -p 6080:6080 zinnionlcc/zinnion-desktop`
 
 * VNC is protected by a unique random password for each session
 * Desktop runs in a standard user account instead of the root account
