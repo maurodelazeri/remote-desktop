@@ -1,5 +1,7 @@
 ### Remote Desktop
 
+The main use case for this container is development in C and C++
+
 `docker run docker run --shm-size=1024m --privileged -p 6080:6080 -e VNCPASS=mypwd zinnionlcc/zinnion-desktop-dev`
 
 * VNC is protected by a unique random password for each session
