@@ -6,11 +6,11 @@
 * Desktop runs in a standard user account instead of the root account
 * Supports dynamic resizing of the desktop and 24-bit true color
 * Supports Ubuntu LTS releases 18.04
-* clion - `2019.3.4`
+* Clion - `2019.3.4`
 * g++/gcc `8`
-* vscode - `latest`
-* chromium - `latest`
-* cmake - `3.16.4`
+* Vscode - `latest`
+* Chromium - `latest`
+* Cmake - `3.16.4`
 
 ### Cavents
 
