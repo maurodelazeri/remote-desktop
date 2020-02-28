@@ -6,7 +6,7 @@ The main use case for this container is development in C and C++
 `docker run docker run --shm-size=1024m --privileged -p 6080:6080 -e VNCPASS=mypwd zinnionlcc/zinnion-desktop-dev`
 
 ### What this container comes with
-* VNC is protected by a unique random password for each session
+* VNC is protected by a password that you specify using `VNCPASS`
 * Desktop runs in a standard user account instead of the root account
 * Supports dynamic resizing of the desktop and 24-bit true color
 * Supports Ubuntu LTS releases 18.04
