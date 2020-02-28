@@ -1,6 +1,6 @@
 ### Remote Desktop
 
-`docker run docker run --shm-size=1024m --privileged -p 6080:6080 zinnionlcc/zinnion-desktop`
+`docker run docker run --shm-size=1024m --privileged -p 6080:6080 -e VNCPASS=mypwd zinnionlcc/zinnion-desktop`
 
 * VNC is protected by a unique random password for each session
 * Desktop runs in a standard user account instead of the root account

@@ -329,6 +329,7 @@ def install_insecure_key():
 def main(args):
     import_envvars(False, False)
     export_envvars()
+    os.remove('/tmp/.X0-lock')
 
     if args.enable_insecure_key:
         install_insecure_key()

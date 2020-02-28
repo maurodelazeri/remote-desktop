@@ -24,8 +24,12 @@ RUN apt-get update && \
     locale-gen $LANG && \
     dpkg-reconfigure -f noninteractive locales && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+	zlib1g-dev \
+	libcurl4 \
+	curl \
  	wget \
 	git \
+	build-essential \
 	dnsutils \
         curl \
         less \
@@ -53,6 +57,7 @@ RUN apt-get update && \
         openssh-server \
         python \
         python3 \
+        python3-pip \
         python3-distutils \
         python3-tk \
         python3-dbus \
@@ -70,8 +75,6 @@ RUN apt-get update && \
         libopengl0 mesa-utils libglu1-mesa libgl1-mesa-dri libjpeg8 libjpeg62 \
         xauth \
         x11vnc \
-        \
-        firefox \
         xpdf && \
     chmod 755 /usr/local/share/zsh/site-functions && \
     apt-get -y autoremove && \
@@ -86,6 +89,26 @@ RUN apt-get update && \
     rm -f /etc/xdg/autostart/lxpolkit.desktop && \
     chmod a-x /usr/bin/lxpolkit && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#RUN apt-get update; apt-get install -y zlib1g-dev curl
+
+# Upgrade openssl
+RUN cd /usr/local/src/ && wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz && tar -xf openssl-1.1.1d.tar.gz && \
+	cd openssl-1.1.1d && ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib && make && make install && \
+	cd .. && rm openssl-1.1.1d.tar.gz
+ 	
+RUN cd /etc/ld.so.conf.d/ && echo "/usr/local/ssl/lib" >  openssl-1.1.1b.conf
+RUN mv /usr/bin/c_rehash /usr/bin/c_rehash.BEKUP
+RUN mv /usr/bin/openssl /usr/bin/openssl.BEKUP
+RUN ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
+RUN echo "PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/ssl/bin\"" > /etc/environment
+
+RUN echo "export OPENSSL_ROOT_DIR=/usr/local/src/openssl-1.1.1d" >> /etc/profile
+RUN echo "export OPENSSL_LIBRARIES=/usr/local/src/openssl-1.1.1d" >> /etc/profile
+RUN echo "export OPENSSL_CRYPTO_LIBRARY=/usr/local/src/openssl-1.1.1d" >> /etc/profile
+
+#RUN apt-get update && apt-get install -y libcurl3 curl libcurl-openssl1.0-dev
+RUN apt-get update && apt-get install -y libcurl4 curl
 
 # Install websokify and noVNC
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
@@ -132,7 +155,6 @@ ENV DOCKER_GROUP=$DOCKER_USER \
     DOCKER_HOME=/home/$DOCKER_USER \
     SHELL=$DOCKER_SHELL
 
-
 # Change the default timezone to $DOCKER_TIMEZONE
 # Run ldconfig so that /usr/local/lib etc. are in the default
 # search path for dynamic linker
@@ -148,9 +170,26 @@ ADD image/usr /usr
 ADD image/sbin /sbin
 ADD image/home $DOCKER_HOME
 
-RUN mkdir -p $DOCKER_HOME/.config/mozilla && \
-    ln -s -f .config/mozilla $DOCKER_HOME/.mozilla && \
-    touch $DOCKER_HOME/.sudo_as_admin_successful && \
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test && apt-get update && apt-get install -y gcc-8 g++-8 openjdk-11-jdk yarn apt-transport-https chromium-browser
+
+RUN rm /usr/bin/gcc
+RUN rm /usr/bin/g++
+RUN ln -s /usr/bin/gcc-8 /usr/bin/gcc
+RUN ln -s /usr/bin/g++-8 /usr/bin/g++
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+RUN install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
+RUN sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+RUN apt-get update && apt-get install code -y 
+
+RUN cd $DOCKER_HOME && wget https://download-cf.jetbrains.com/cpp/CLion-2019.3.4.tar.gz --no-check-certificate && tar -zxvf CLion-2019.3.4.tar.gz && rm CLion-2019.3.4.tar.gz
+
+RUN cd $DOCKER_HOME && wget https://github.com/Kitware/CMake/releases/download/v3.16.4/cmake-3.16.4.tar.gz --no-check-certificate && \
+	export OPENSSL_CRYPTO_LIBRARY=/usr/local/src/openssl-1.1.1d && tar -zxvf cmake-3.16.4.tar.gz && cd cmake-3.16.4 && ./bootstrap && make && make install && cd .. && rm -rf cmake*
+
+RUN touch $DOCKER_HOME/.sudo_as_admin_successful && \
     mkdir -p $DOCKER_HOME/shared && \
     mkdir -p $DOCKER_HOME/.ssh && \
     mkdir -p $DOCKER_HOME/.log && touch $DOCKER_HOME/.log/vnc.log && \
