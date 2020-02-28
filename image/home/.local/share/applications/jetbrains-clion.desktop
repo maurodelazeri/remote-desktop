@@ -2,8 +2,8 @@
 Version=1.0
 Type=Application
 Name=CLion
-Icon=/home/ubuntu/cLion-2019.3.4/bin/clion.svg
-Exec="/home/ubuntu/cLion-2019.3.4/bin/clion.sh" %f
+Icon=/home/ubuntu/clion-2019.3.4/bin/clion.svg
+Exec="/home/ubuntu/clion-2019.3.4//bin/clion.sh" %f
 Comment=A cross-platform IDE for C and C++
 Categories=Development;IDE;
 Terminal=false

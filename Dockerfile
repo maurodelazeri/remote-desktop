@@ -186,8 +186,12 @@ RUN apt-get update && apt-get install code -y
 
 RUN cd $DOCKER_HOME && wget https://download-cf.jetbrains.com/cpp/CLion-2019.3.4.tar.gz --no-check-certificate && tar -zxvf CLion-2019.3.4.tar.gz && rm CLion-2019.3.4.tar.gz
 
+ENV OPENSSL_ROOT_DIR=/usr/local/src/openssl-1.1.1d
+ENV OPENSSL_LIBRARIES=/usr/local/src/openssl-1.1.1d
+ENV OPENSSL_CRYPTO_LIBRARY=/usr/local/src/openssl-1.1.1d
+
 RUN cd $DOCKER_HOME && wget https://github.com/Kitware/CMake/releases/download/v3.16.4/cmake-3.16.4.tar.gz --no-check-certificate && \
-	export OPENSSL_CRYPTO_LIBRARY=/usr/local/src/openssl-1.1.1d && tar -zxvf cmake-3.16.4.tar.gz && cd cmake-3.16.4 && ./bootstrap && make && make install && cd .. && rm -rf cmake*
+	tar -zxvf cmake-3.16.4.tar.gz && cd cmake-3.16.4 && ./bootstrap && make && make install && cd .. && rm -rf cmake*
 
 RUN touch $DOCKER_HOME/.sudo_as_admin_successful && \
     mkdir -p $DOCKER_HOME/shared && \
