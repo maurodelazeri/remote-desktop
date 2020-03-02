@@ -61,6 +61,7 @@ RUN apt-get update && \
         python3-distutils \
         python3-tk \
         python3-dbus \
+	python3-setuptools \ 
         \
         xserver-xorg-video-dummy \
         lxde \
